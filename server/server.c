@@ -7,45 +7,43 @@
 #include "netinet/in.h"
 #include "string.h"
 
-int main (int argc, char* argv[])
+int main (int argc, char *argv[])
 {
-	int socket_fd, client_sock, client, read_size;
+	int socket_desc, client_sock, c, read_size;
 	
-	struct sockaddr_in server_add, client_add;
+	struct sockaddr_in server, client;
 	
 	char client_message[2000];
 
 	//Socket
-	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if(socket_fd == -1)
+	socket_desc = socket(AF_INET, SOCK_STREAM, 0);
+	if(socket_desc == -1)
 	{
 		printf ("could not crate sockect");
 		return 1;
 	}
 	puts("Socket created\n");	
 
-	server_add.sin_family= AF_INET;
-	server_add.sin_addr.s_addr=INADDR_ANY;
-	server_add.sin_port=htons(8888);
+	server.sin_family      = AF_INET;
+	server.sin_addr.s_addr = INADDR_ANY;
+	server.sin_port        = htons(8888);
 
 	//Bind	
-	if(bind(socket_fd,(struct sockaddr *)&server_add, sizeof(server_add)) < 0 )
+	if(bind(socket_desc,(struct sockaddr *)&server, sizeof(server)) < 0)
 	{
-
 		printf ("could not bind\n ");
 		return 1;
 	}
 	puts("bind done\n");
 
-
 	///Listen
-	listen(socket_fd , 3);
+	listen(socket_desc , 3);
 
-	client = sizeof(client_add);
+	c = sizeof(struct sockaddr_in);
 
 
-	if(client_sock= accept(socket_fd, (struct sockaddr *)&client_add, (socklen_t*)&client)==-1)
-		//if (client_sock < 0)
+	client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
+	if (client_sock < 0)
 	{
 		perror("accept failed");
 		return 1;
